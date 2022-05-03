@@ -1,42 +1,35 @@
 const express = require("express");
-const http = require("http");
+const _= require("lodash");
 const app = express();
-app.listen(3000, ()=>console.log("listening on port 3000"));
-//app.use(express.static("api/"));
+app.listen(3001, ()=>console.log("listening on port 3001"));
 
 app.use(express.json())
 
 app.get("/api", (req, res)=>{
 	res.status(200).json({
-		role: "User",
-		name: "user"
+		message: "Can't deal with this request"
 	})
 
 })
 
-var merge = function(target, source){
-	for(var attr in source){
-		if(typeof(target['attr'])=="object" && typeof(source['attr'])=="object"){
-			merge(target['attr'], source['attr']);
-		}else{
-			target['attr'] = source['attr'];
-		}
-	}
-	return target;
-}
+const info = {};
 
 class User{
-	constructor(role, user){
+	constructor(role, name){
 		this.role = role;
-		this.user = user;
-		this.isAdmin =false;
+		this.name = name;
 	}
 
 }
 
 app.post("/api", (req, res)=>{
+
 	const { role }=req.body;
 	const { name }=req.body;
+
+	user = new User(role, name);
+	user1 = new User(role, name);
+	_.merge(user, req.body.__proto__);
 	if(!role){
 		res.status(200).json({
 			message: "Role should be provided",
@@ -47,18 +40,15 @@ app.post("/api", (req, res)=>{
 			message: "Name should be provided",
 		})
 	}
-	user = new User(role, name);
-	console.log(user.isAdmin);
-	if(user.isAdmin==true){
+	if(user1.isAdmin){
 		res.json({
 			body: req.body,
 			flag: "flag{Pr0t0typ3_P0lluti0n_1s_c00l}",
 		})
-	}else if(user.isAdmin==false){
+	}else{
 		res.json({
 			body: req.body,
 		})	
 	}
-	
 
 });
